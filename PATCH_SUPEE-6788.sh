@@ -37,7 +37,7 @@ fi;
 if [ $filename != "no-version" ]; then
 	patch_file="PATCH_SUPEE-6788_CE_"$filename"_v1.sh"
 	echo "Download patch: $patch_file"
-	wget --no-check-certificate --quiet - https://raw.githubusercontent.com/rikwillems/SUPEE-6788/master/$patch_file
+	wget --no-check-certificate --quiet - https://raw.githubusercontent.com/rikwillems/SUPEE-6788/without-cron-patch/$patch_file
 else 
 	echo "Version not supported for patch."
 	exit;
@@ -50,3 +50,69 @@ php -f shell/compiler.php disable
 
 echo "Clear compiler:"
 php -f shell/compiler.php clear
+
+
+# Manually add cron protection to .htaccess
+echo "Adding cron protection to .htaccess"
+cat <<EOL >> .htaccess
+
+###########################################
+## Deny access to cron.php
+    <Files cron.php>
+
+############################################
+## uncomment next lines to enable cron access with base HTTP authorization
+## http://httpd.apache.org/docs/2.2/howto/auth.html
+##
+## Warning: .htpasswd file should be placed somewhere not accessible from the web.
+## This is so that folks cannot download the password file.
+## For example, if your documents are served out of /usr/local/apache/htdocs
+## you might want to put the password file(s) in /usr/local/apache/.
+
+        #AuthName "Cron auth"
+        #AuthUserFile ../.htpasswd
+        #AuthType basic
+        #Require valid-user
+
+############################################
+
+        Order allow,deny
+        Deny from all
+
+    </Files>
+EOL
+
+
+# Manually add cron protection to .htaccess.sample
+echo "Adding cron protection to .htaccess.sample"
+
+if [ -e ".htaccess.sample" ]
+then
+	cat <<EOL >> .htaccess.sample 
+	
+###########################################
+## Deny access to cron.php
+    <Files cron.php>
+
+############################################
+## uncomment next lines to enable cron access with base HTTP authorization
+## http://httpd.apache.org/docs/2.2/howto/auth.html
+##
+## Warning: .htpasswd file should be placed somewhere not accessible from the web.
+## This is so that folks cannot download the password file.
+## For example, if your documents are served out of /usr/local/apache/htdocs
+## you might want to put the password file(s) in /usr/local/apache/.
+
+        #AuthName "Cron auth"
+        #AuthUserFile ../.htpasswd
+        #AuthType basic
+        #Require valid-user
+
+############################################
+
+        Order allow,deny
+        Deny from all
+
+    </Files>
+EOL
+fi
