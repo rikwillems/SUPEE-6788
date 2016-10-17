@@ -8,7 +8,13 @@ naked_version="${version//\./}"
 
 
 # Which patch file do we need?
-if [ $naked_version -ge 1700 -a $naked_version -lt 1702 ]; then
+if [ $naked_version -ge 1600 -a $naked_version -lt 1610 ]; then
+	filename="1.6.0.0"
+elif [ $naked_version -ge 1610 -a $naked_version -lt 1620 ]; then
+	filename="1.6.1.0"
+elif [ $naked_version -ge 1620 -a $naked_version -lt 1700 ]; then
+	filename="1.6.2.0"
+elif [ $naked_version -ge 1700 -a $naked_version -lt 1702 ]; then
 	filename="1.7.0.1"
 elif [ $naked_version -ge 1702 -a $naked_version -lt 1800 ]; then
 	filename="1.7.0.2"
